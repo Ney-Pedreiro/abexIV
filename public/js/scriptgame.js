@@ -3,209 +3,391 @@ const like = document.querySelector('#like');
 const dislike = document.querySelector('#dislike');
 
 const cartasGrupos = {
-    casa_manha: [
+    // =============================================================
+    // EVENTOS FIXOS DO DIA (1 carta por vez, mas várias opções)
+    // =============================================================
+
+    // --- MANHÃ ---
+    acordar_higiene: [
         {
             id: 1,
-            texto: "São 6 da manhã e você acordou sonolento, bem cansado. Gostaria de fazer a higiene diária?\n\n➡️ Sim: Saúde +5\n⬅️ Não: Saúde -5",
+            texto: "São 6 da manhã e você acordou sonolento. Fazer a higiene diária para despertar de vez?\n\n➡️ Sim: Saúde +5\n⬅️ Não: Saúde -5",
             local: "Casa",
-            sim: { saude: +5 },
+            sim: { saude: 5 },
             nao: { saude: -5 },
             tags: ["manha", "higiene"],
             incompativel_com: [],
-            itens_compativeis: ["energetico", "cafe"] // Usar energético ou café ao acordar
+            itens_compativeis: ["energetico", "cafe"]
+        },
+        {
+            id: 201,
+            texto: "Seu alarme toca incessantemente. Você está atrasado! Tomar um banho rápido ou só escovar os dentes e sair correndo?\n\n➡️ Banho rápido: Saúde +3, Estresse +5\n⬅️ Só escovar dentes: Estresse +10",
+            local: "Casa",
+            sim: { saude: 3, estresse: 5 },
+            nao: { estresse: 10 },
+            tags: ["manha", "higiene"],
+            incompativel_com: [],
+            itens_compativeis: ["despertador", "shampoo"]
+        },
+        {
+            id: 202,
+            texto: "Você acordou antes do alarme, se sentindo descansado. Aproveitar para fazer alguns alongamentos ou ficar mais tempo na cama?\n\n➡️ Alongamentos: Saúde +8, Felicidade +5\n⬅️ Ficar na cama: Felicidade +3",
+            local: "Casa",
+            sim: { saude: 8, felicidade: 5 },
+            nao: { felicidade: 3 },
+            tags: ["manha", "higiene"],
+            incompativel_com: [],
+            itens_compativeis: ["tapete_yoga"]
         }
     ],
-    preparo_trabalho: [
-        {
-            id: 10,
-            texto: "Hora de começar o dia! Gostaria de tomar um banho antes de sair para o trabalho?\n\n➡️ Sim: Saúde +5 / Felicidade +3\n⬅️ Não: Saúde -5",
-            local: "Casa",
-            sim: { saude: +5, felicidade: +3 },
-            nao: { saude: -5 },
-            tags: ["manha", "higiene", "preparo"],
-            incompativel_com: [],
-            itens_compativeis: ["sabonete", "shampoo"]        
-        },
+
+    cafe_da_manha: [
         {
             id: 11,
-            texto: "Seu despertador tocou. Preparar um café da manhã completo ou apenas pegar algo rápido?\n\n➡️ Café completo: Saúde +10 / Estresse -5\n⬅️ Algo rápido: Estresse +5",
+            texto: "Hora do café da manhã. Preparar algo completo e saudável ou apenas pegar uma fruta e sair correndo?\n\n➡️ Café completo: Saúde +10, Estresse -5\n⬅️ Algo rápido: Estresse +5",
             local: "Casa",
-            sim: { saude: +10, estresse: -5 },
-            nao: { estresse: +5 },
-            tags: ["manha", "alimentacao", "preparo"],
+            sim: { saude: 10, estresse: -5 },
+            nao: { estresse: 5 },
+            tags: ["manha", "alimentacao"],
             incompativel_com: [],
-            itens_compativeis: ["vitamina", "cereais"]        
+            itens_compativeis: ["vitamina", "cereais"]
         },
         {
-            id: 12,
-            texto: "Está quase na hora de sair. Organizar os materiais de trabalho antes de partir?\n\n➡️ Sim: Estresse -5\n⬅️ Não: Estresse +5",
+            id: 211,
+            texto: "Você está sem nada na geladeira. Pedir delivery de um café da manhã ou ir trabalhar em jejum?\n\n➡️ Delivery: Saúde +5, Saldo -25\n⬅️ Jejum: Saúde -10, Estresse +15",
             local: "Casa",
-            sim: { estresse: -5 },
-            nao: { estresse: +5 },
-            tags: ["manha", "organizacao", "preparo"],
-            incompativel_com: [],
-            itens_compativeis: ["agenda", "organizador"]        
+            sim: { saude: 5, saldo: -25 },
+            nao: { saude: -10, estresse: 15 },
+            tags: ["manha", "alimentacao"],
+            incompativel_com: ["pouco_dinheiro"],
+            itens_compativeis: ["barra_cereal", "vitamina"]
         },
+        {
+            id: 212,
+            texto: "Seu vizinho fez um bolo delicioso e te ofereceu um pedaço. Aceitar a gentileza ou recusar educadamente?\n\n➡️ Aceitar: Felicidade +15, Saúde -5\n⬅️ Recusar: Felicidade -5, Saúde +5",
+            local: "Casa",
+            sim: { felicidade: 15, saude: -5 },
+            nao: { felicidade: -5, saude: 5 },
+            tags: ["manha", "alimentacao", "social"],
+            incompativel_com: [],
+            itens_compativeis: []
+        }
+    ],
+
+    transporte_trabalho: [
         {
             id: 13,
-            texto: "Tem um ônibus saindo agora, mas você pode se atrasar. Pedir um carro por aplicativo?\n\n➡️ Sim: Estresse -10 / Saldo -15\n⬅️ Não: Estresse +10",
+            texto: "O trânsito parece intenso. Ir de ônibus, que é mais barato, ou pedir um carro por aplicativo para ir mais confortável?\n\n➡️ Carro: Estresse -10, Saldo -15\n⬅️ Ônibus: Estresse +5",
             local: "Casa",
             sim: { estresse: -10, saldo: -15 },
-            nao: { estresse: +10 },
-            tags: ["manha", "transporte", "preparo"],
+            nao: { estresse: 5 },
+            tags: ["manha", "transporte"],
             incompativel_com: [],
-            itens_compativeis: ["carteira", "dinheiro"]        
-        }
-    ],
-    saude: [
-        {
-            id: 2,
-            texto: "Você enfrentou uma frente fria nos últimos dias e contraiu uma gripe. Comprar remédio para curar a doença?\n\n➡️ Sim: Saúde +10 / Saldo -20\n⬅️ Não: Saúde -10",
-            local: "Casa",
-            sim: { saude: +10, saldo: -20 },
-            nao: { saude: -10 },
-            tags: ["doenca", "gripe"],
-            incompativel_com: ["remedio_gripe"],            
-            acoes_sim: {
-                adicionar_item: 1            
-            },
-            itens_compativeis: ["remedio", "vitamina_c"]        
-        }
-    ],
-    casa_noite: [
-        {
-            id: 3,
-            texto: "Depois de um longo dia de trabalho você está uma pilha de nervos! Assistir TV para desestressar?\n\n➡️ Sim: Estresse -10\n⬅️ Não: Estresse +10",
-            local: "Casa",
-            sim: { estresse: -10 },
-            nao: { estresse: +10 },
-            tags: ["noite", "lazer"],
-            incompativel_com: [],
-            itens_compativeis: ["cha_calmante", "remedio_relaxante"]        
+            itens_compativeis: ["carteira", "dinheiro"]
         },
         {
-            id: 4,
-            texto: "Você está com bastante trabalho acumulado. Trabalhar por duas horas em casa essa noite?\n\n➡️ Sim: Estresse +5\n⬅️ Não: Estresse se mantém",
+            id: 213,
+            texto: "Choveu durante a noite e há várias poças no caminho. Ir caminhando mesmo assim ou gastar com transporte?\n\n➡️ Caminhar: Saúde -5, Estresse +10\n⬅️ Transporte: Saldo -10",
             local: "Casa",
-            sim: { estresse: +5 },
-            nao: {},
-            tags: ["noite", "trabalho"],
-            incompativel_com: ["muito_estressado"],            
-            itens_compativeis: ["cafe", "energetico"]        
+            sim: { saude: -5, estresse: 10 },
+            nao: { saldo: -10 },
+            tags: ["manha", "transporte"],
+            incompativel_com: [],
+            itens_compativeis: ["guarda_chuva", "sapato_impermeavel"]
+        }
+    ],
+
+    // --- TARDE ---
+    almoco: [
+        {
+            id: 100,
+            texto: "Hora do almoço! Comer no restaurante caro com os colegas ou levar marmita para economizar?\n\n➡️ Restaurante: Felicidade +10, Saldo -30\n⬅️ Marmita: Saldo +10",
+            local: "Trabalho",
+            sim: { felicidade: 10, saldo: -30 },
+            nao: { saldo: 10 },
+            tags: ["tarde", "alimentacao"],
+            incompativel_com: ["pouco_dinheiro"],
+            itens_compativeis: ["comida_congelada", "dinheiro_extra"]
         },
+        {
+            id: 301,
+            texto: "Um colega te convidou para experimentar um restaurante japonês novo. É caro, mas parece incrível. Ir junto?\n\n➡️ Ir: Felicidade +20, Saldo -45\n⬅️ Dispensar: Felicidade -5, Saldo +5",
+            local: "Trabalho",
+            sim: { felicidade: 20, saldo: -45 },
+            nao: { felicidade: -5, saldo: 5 },
+            tags: ["tarde", "alimentacao", "social"],
+            incompativel_com: ["pouco_dinheiro"],
+            itens_compativeis: ["cartao_credito"]
+        },
+        {
+            id: 302,
+            texto: "A máquina de lanches quebrou e você só tem 30 minutos de almoço. Sair para comprar algo ou ficar sem comer?\n\n➡️ Sair: Estresse +15, Saldo -20\n⬅️ Ficar sem comer: Saúde -15, Estresse +10",
+            local: "Trabalho",
+            sim: { estresse: 15, saldo: -20 },
+            nao: { saude: -15, estresse: 10 },
+            tags: ["tarde", "alimentacao"],
+            incompativel_com: [],
+            itens_compativeis: ["lanche_emergencia", "energetico"]
+        }
+    ],
+
+    // --- NOITE ---
+    volta_casa: [
+        {
+            id: 101,
+            texto: "Fim do expediente. O caminho normal para casa está congestionado. Pegar um atalho por uma rua escura ou esperar no trânsito?\n\n➡️ Atalho: Estresse +10, Saúde -5\n⬅️ Esperar: Estresse +5",
+            local: "Trabalho",
+            sim: { estresse: 10, saude: -5 },
+            nao: { estresse: 5 },
+            tags: ["noite", "transporte"],
+            incompativel_com: [],
+            itens_compativeis: []
+        },
+        {
+            id: 401,
+            texto: "Você perdeu o último ônibus. Pegar um táxi caro ou caminhar 40 minutos até em casa?\n\n➡️ Táxi: Saldo -50, Estresse -5\n⬅️ Caminhar: Estresse +15, Saúde +5",
+            local: "Trabalho",
+            sim: { saldo: -50, estresse: -5 },
+            nao: { estresse: 15, saude: 5 },
+            tags: ["noite", "transporte"],
+            incompativel_com: [],
+            itens_compativeis: ["carteira", "tenis_confortavel"]
+        }
+    ],
+
+    jantar: [
         {
             id: 14,
-            texto: "Está ficando tarde. Preparar uma refeição saudável ou pedir comida?\n\n➡️ Cozinhar: Saúde +10 / Saldo -10\n⬅️ Delivery: Saúde -5 / Saldo -25",
+            texto: "Você chegou em casa. Preparar um jantar saudável ou pedir uma pizza?\n\n➡️ Cozinhar: Saúde +10, Saldo -10\n⬅️ Pizza: Felicidade +10, Saúde -5, Saldo -25",
             local: "Casa",
-            sim: { saude: +10, saldo: -10 },
-            nao: { saude: -5, saldo: -25 },
+            sim: { saude: 10, saldo: -10 },
+            nao: { felicidade: 10, saude: -5, saldo: -25 },
             tags: ["noite", "alimentacao"],
             incompativel_com: [],
-            itens_compativeis: ["comida_congelada", "vitamina"]        
+            itens_compativeis: ["comida_congelada", "vitamina"]
         },
         {
-            id: 15,
-            texto: "Você poderia ler um livro antes de dormir. Ler por meia hora?\n\n➡️ Sim: Felicidade +10 / Estresse -5\n⬅️ Não: Felicidade -5",
+            id: 402,
+            texto: "Sua mãe ligou perguntando se quer jantar na casa dela. Aceitar o convite carinhoso ou ficar em casa relaxando?\n\n➡️ Ir na casa da mãe: Felicidade +20, Estresse -10\n⬅️ Ficar em casa: Estresse -5, Felicidade +5",
             local: "Casa",
-            sim: { felicidade: +10, estresse: -5 },
-            nao: { felicidade: -5 },
-            tags: ["noite", "lazer", "educacao"],
+            sim: { felicidade: 20, estresse: -10 },
+            nao: { estresse: -5, felicidade: 5 },
+            tags: ["noite", "alimentacao", "social"],
             incompativel_com: [],
-            itens_compativeis: ["oculos", "luz_leitura"]        
+            itens_compativeis: ["presente_mae"]
         },
         {
-            id: 16,
-            texto: "Um amigo envia mensagem convidando para uma festa. Você vai?\n\n➡️ Sim: Felicidade +15 / Saldo -30 / Saúde -5\n⬅️ Não: Felicidade -10",
+            id: 403,
+            texto: "Você tentou cozinhar, mas queimou a comida. Tentar novamente ou desistir e comer cereal?\n\n➡️ Tentar novamente: Estresse +10, Saúde +10\n⬅️ Cereal: Felicidade -10, Saúde -5",
             local: "Casa",
-            sim: { felicidade: +15, saldo: -30, saude: -5 },
-            nao: { felicidade: -10 },
-            tags: ["noite", "social", "lazer"],
-            incompativel_com: ["pouco_dinheiro"],            
-            itens_compativeis: ["roupa_social", "presente"]        
-        },
-        {
-            id: 20,
-            texto: "Você está tendo dificuldade para dormir. O que prefere fazer?\n\n➡️ Ficar na cama: Estresse +5 / Saúde -5\n⬅️ Levantar e ver TV: Felicidade -5",
-            local: "Casa",
-            sim: { estresse: +5, saude: -5 },
-            nao: { felicidade: -5 },
-            tags: ["noite", "sono"],
+            sim: { estresse: 10, saude: 10 },
+            nao: { felicidade: -10, saude: -5 },
+            tags: ["noite", "alimentacao"],
             incompativel_com: [],
-            itens_compativeis: ["cha", "remedio_sono"]        
+            itens_compativeis: ["livro_culinaria"]
         }
     ],
+
+    dormir: [
+        {
+            id: 20,
+            texto: "Está na hora de dormir, mas sua mente não desliga. Tentar meditar por 10 minutos ou rolar na cama até o sono vir?\n\n➡️ Meditar: Estresse -10, Saúde +5\n⬅️ Rolar na cama: Estresse +5",
+            local: "Casa",
+            sim: { estresse: -10, saude: 5 },
+            nao: { estresse: 5 },
+            tags: ["noite", "sono"],
+            incompativel_com: [],
+            itens_compativeis: ["cha_calmante", "remedio_sono"]
+        },
+        {
+            id: 404,
+            texto: "Você está exausto, mas lembrou que não escovou os dentes. Levantar para escovar ou dormir mesmo assim?\n\n➡️ Escovar: Saúde +5, Estresse +5\n⬅️ Dormir assim: Saúde -5, Estresse -5",
+            local: "Casa",
+            sim: { saude: 5, estresse: 5 },
+            nao: { saude: -5, estresse: -5 },
+            tags: ["noite", "sono", "higiene"],
+            incompativel_com: [],
+            itens_compativeis: ["escova_eletrica"]
+        },
+        {
+            id: 405,
+            texto: "Seus vizinhos estão fazendo barulho e você não consegue dormir. Ir lá reclamar educadamente ou usar tampões de ouvido?\n\n➡️ Reclamar: Estresse +10, Felicidade +5\n⬅️ Tampões: Estresse -5",
+            local: "Casa",
+            sim: { estresse: 10, felicidade: 5 },
+            nao: { estresse: -5 },
+            tags: ["noite", "sono", "social"],
+            incompativel_com: [],
+            itens_compativeis: ["tampao_ouvido", "mascara_dormir"]
+        }
+    ],
+
+    // =============================================================
+    // POOL DE CARTAS ALEATÓRIAS (Embaralhadas e sorteadas)
+    // =============================================================
+
     trabalho: [
+        // --- SUAS CARTAS ORIGINAIS ---
         {
             id: 5,
-            texto: "Seu chefe pede que você vá buscar um café na padaria próxima. Você aceita?\n\n➡️ Sim: Estresse +5\n⬅️ Não: Estresse se mantém (mas perde moral)",
+            texto: "Seu chefe pede para você buscar um café para ele. É uma tarefa simples, mas fora da sua função. Você aceita?\n\n➡️ Sim: Felicidade +5 (chefe feliz)\n⬅️ Não: Estresse +5",
             local: "Trabalho",
-            sim: { estresse: +5 },
-            nao: {},
+            sim: { felicidade: 5 },
+            nao: { estresse: 5 },
             tags: ["trabalho", "social"],
             incompativel_com: [],
-            itens_compativeis: ["cafe_pronto", "dinheiro"]        
+            itens_compativeis: ["dinheiro"]
         },
         {
             id: 6,
-            texto: "Você tem bastante trabalho extra. Gostaria de fazer horas extras hoje?\n\n➡️ Sim: Estresse +10 / Saldo +50\n⬅️ Não: Estresse se mantém",
+            texto: "Apareceu a chance de fazer horas extras hoje e ganhar um bom dinheiro. Ficar até mais tarde?\n\n➡️ Sim: Estresse +10, Saldo +50\n⬅️ Não: Felicidade +5",
             local: "Trabalho",
-            sim: { estresse: +10, saldo: +50 },
-            nao: {},
+            sim: { estresse: 10, saldo: 50 },
+            nao: { felicidade: 5 },
             tags: ["trabalho", "dinheiro"],
-            incompativel_com: ["muito_estressado"],            
-            itens_compativeis: ["energetico", "cafe"]        
-        },
-        {
-            id: 7,
-            texto: "O expediente acabou e seus amigos estão armando um Happy Hour. Vai junto?\n\n➡️ Sim: Felicidade +20 / Saldo -40\n⬅️ Não: Você vai para casa",
-            local: "Trabalho",
-            sim: { felicidade: +20, saldo: -40 },
-            nao: {},
-            tags: ["social", "fim_expediente", "lazer"],
-            incompativel_com: ["pouco_dinheiro"],            
-            itens_compativeis: ["dinheiro_extra", "carteira"]        
+            incompativel_com: ["muito_estressado"],
+            itens_compativeis: ["energetico", "cafe"]
         },
         {
             id: 17,
-            texto: "Um colega está com dificuldade em um projeto. Ajudá-lo com suas habilidades?\n\n➡️ Sim: Estresse +5 / Felicidade +10\n⬅️ Não: Felicidade -5",
+            texto: "Um colega está com muita dificuldade em uma tarefa que você domina. Oferecer ajuda, mesmo que atrase seu próprio trabalho?\n\n➡️ Sim: Estresse +5, Felicidade +10\n⬅️ Não: Felicidade -5",
             local: "Trabalho",
-            sim: { estresse: +5, felicidade: +10 },
+            sim: { estresse: 5, felicidade: 10 },
             nao: { felicidade: -5 },
             tags: ["trabalho", "social"],
             incompativel_com: [],
-            itens_compativeis: ["manual_tecnico", "tablet"]        
+            itens_compativeis: ["manual_tecnico"]
         },
         {
             id: 18,
-            texto: "Seu supervisor elogiou seu trabalho recente e ofereceu um projeto importante. Aceitar?\n\n➡️ Sim: Estresse +15 / Felicidade +15\n⬅️ Não: Estresse -5 / Felicidade -10",
+            texto: "Seu supervisor elogiou seu trabalho na frente de todos e te deu um projeto de maior responsabilidade. Aceitar o desafio?\n\n➡️ Sim: Estresse +15, Felicidade +15\n⬅️ Não: Estresse -5, Felicidade -10",
             local: "Trabalho",
-            sim: { estresse: +15, felicidade: +15 },
+            sim: { estresse: 15, felicidade: 15 },
             nao: { estresse: -5, felicidade: -10 },
             tags: ["trabalho", "carreira"],
-            incompativel_com: ["muito_estressado"],            
-            itens_compativeis: ["guia_gestao", "planejador"]        
-        }
-    ],
-    teste: [
-        {
-            id: 8,
-            texto: "teste saude\n\n➡️ Sim: Saude +100 /\n⬅️ Não: Saude -100",
-            local: "Trabalho",
-            sim: { saude: +100},
-            nao: {saude: -100},
-            tags: ["teste"],
-            incompativel_com: []
+            incompativel_com: ["muito_estressado"],
+            itens_compativeis: ["guia_gestao"]
         },
         {
-            id: 9,
-            texto: "teste felicidade\n\n➡️ Sim: felicidade +100 /\n⬅️ Não: felicidade -100",
+            id: 102,
+            texto: "Uma tarefa extremamente repetitiva e chata caiu na sua mesa. Fazer agora para se livrar disso ou deixar para o fim do dia?\n\n➡️ Fazer agora: Felicidade -10, Estresse -5\n⬅️ Deixar para depois: Estresse +10",
             local: "Trabalho",
-            sim: { felicidade: +100},
-            nao: { felicidade: -100},
-            tags: ["teste"],
-            incompativel_com: []
+            sim: { felicidade: -10, estresse: -5 },
+            nao: { estresse: 10 },
+            tags: ["trabalho"],
+            incompativel_com: [],
+            itens_compativeis: []
+        },
+        {
+            id: 103,
+            texto: "A internet da empresa caiu. Aproveitar para adiantar tarefas offline ou relaxar e conversar com colegas?\n\n➡️ Tarefas offline: Estresse -5\n⬅️ Conversar: Felicidade +10, Estresse -5",
+            local: "Trabalho",
+            sim: { estresse: -5 },
+            nao: { felicidade: 10, estresse: -5 },
+            tags: ["trabalho", "social"],
+            incompativel_com: [],
+            itens_compativeis: []
+        },
+        {
+            id: 104,
+            texto: "Você cometeu um pequeno erro que ninguém notou. Corrigir silenciosamente ou reportar ao seu chefe?\n\n➡️ Corrigir: Estresse +5\n⬅️ Reportar: Felicidade +5, Estresse -5",
+            local: "Trabalho",
+            sim: { estresse: 5 },
+            nao: { felicidade: 5, estresse: -5 },
+            tags: ["trabalho", "carreira"],
+            incompativel_com: [],
+            itens_compativeis: []
+        },
+        {
+            id: 105,
+            texto: "Convidaram você para uma reunião de última hora que parece completamente inútil. Participar ativamente ou ficar quieto no seu canto?\n\n➡️ Participar: Estresse +5\n⬅️ Ficar quieto: Felicidade +5",
+            local: "Trabalho",
+            sim: { estresse: 5 },
+            nao: { felicidade: 5 },
+            tags: ["trabalho", "social"],
+            incompativel_com: [],
+            itens_compativeis: []
+        },
+        // --- CARTAS NOVAS QUE CRIEI ---
+        {
+            id: 501,
+            texto: "A impressora travou bem na hora que você precisa imprimir um documento urgente. Tentar consertar sozinho ou chamar o técnico?\n\n➡️ Tentar consertar: Estresse +15, Felicidade +5\n⬅️ Chamar técnico: Estresse -5, Saldo -30",
+            local: "Trabalho",
+            sim: { estresse: 15, felicidade: 5 },
+            nao: { estresse: -5, saldo: -30 },
+            tags: ["trabalho", "tecnologia"],
+            incompativel_com: [],
+            itens_compativeis: ["manual_impressora"]
+        },
+        {
+            id: 502,
+            texto: "Você descobriu que um colega está falando mal de você pelas costas. Confrontar a pessoa ou ignorar completamente?\n\n➡️ Confrontar: Estresse +20, Felicidade +10\n⬅️ Ignorar: Estresse +5, Felicidade -5",
+            local: "Trabalho",
+            sim: { estresse: 20, felicidade: 10 },
+            nao: { estresse: 5, felicidade: -5 },
+            tags: ["trabalho", "social", "conflito"],
+            incompativel_com: [],
+            itens_compativeis: ["guia_comunicacao"]
+        },
+        {
+            id: 503,
+            texto: "Chegou um e-mail com uma tarefa que não é sua responsabilidade, mas ninguém mais vai fazer. Assumir a tarefa ou repassar?\n\n➡️ Assumir: Estresse +15, Felicidade +5\n⬅️ Repassar: Felicidade -5",
+            local: "Trabalho",
+            sim: { estresse: 15, felicidade: 5 },
+            nao: { felicidade: -5 },
+            tags: ["trabalho", "responsabilidade"],
+            incompativel_com: ["muito_estressado"],
+            itens_compativeis: []
+        },
+        {
+            id: 504,
+            texto: "O ar condicionado quebrou e está um calor insuportável no escritório. Sugerir que todos saiam mais cedo ou aguentar firme?\n\n➡️ Sugerir sair: Felicidade +15, Estresse -10\n⬅️ Aguentar: Estresse +20, Saúde -5",
+            local: "Trabalho",
+            sim: { felicidade: 15, estresse: -10 },
+            nao: { estresse: 20, saude: -5 },
+            tags: ["trabalho", "ambiente"],
+            incompativel_com: [],
+            itens_compativeis: ["ventilador_portatil", "agua_gelada"]
+        },
+        {
+            id: 505,
+            texto: "Seu chefe cancelou uma reunião importante de última hora. Aproveitar o tempo livre ou adiantar outras tarefas?\n\n➡️ Tempo livre: Felicidade +10, Estresse -15\n⬅️ Adiantar tarefas: Estresse -5, Felicidade +5",
+            local: "Trabalho",
+            sim: { felicidade: 10, estresse: -15 },
+            nao: { estresse: -5, felicidade: 5 },
+            tags: ["trabalho", "produtividade"],
+            incompativel_com: [],
+            itens_compativeis: ["agenda_pessoal"]
+        }
+    ],
+
+    // --- OUTROS GRUPOS (mantidos como estavam) ---
+    saude: [
+        {
+            id: 2,
+            texto: "Você pegou uma gripe forte. Comprar um remédio na farmácia ou tentar aguentar firme?\n\n➡️ Comprar remédio: Saúde +15, Saldo -20\n⬅️ Aguentar: Saúde -10",
+            local: "Casa",
+            sim: { saude: 15, saldo: -20 },
+            nao: { saude: -10 },
+            tags: ["doenca", "gripe"],
+            incompativel_com: ["remedio_gripe"],
+            acoes_sim: { adicionar_item: 1 },
+            itens_compativeis: ["remedio", "vitamina_c"]
         }
     ]
+};
+
+const CARTA_CHEGOU_TRABALHO = {
+    id: 9001, 
+    type: 'transicao',
+    texto: 'Você chegou ao trabalho.',
+    tags: ['manha'] 
+};
+
+const CARTA_CHEGOU_CASA = {
+    id: 9002,
+    type: 'transicao',
+    texto: 'Você chegou em casa.',
+    tags: ['noite'] 
 };
 
 const cartas = Object.values(cartasGrupos).flat();
@@ -216,77 +398,76 @@ let jogador = {
     felicidade: 50,
     saldo: 100,
     inventario: [],
-    // Novos campos para rastreamento
+
     estado: {
-        local: "casa",          // casa, trabalho
-        periodo: "manha",       // manha, tarde, noite
-        condicoes: [],          // gripado, cansado, etc.
-        ultimasCartas: [],      // IDs das últimas 5 cartas mostradas
-        ultimoGrupo: "",        // Último grupo de cartas mostrado
-        ultimoItem: null,       // Último item obtido
+        condicoes: [],        
+        ultimasCartas: [],      
         contadores: {
-            itens: 0,           // Cartas desde o último item
-            consecutivasMesmoGrupo: 0  // Cartas consecutivas do mesmo grupo
+            itens: 0,           
         },
-        contagemPeriodo: {      // Contagem de cartas por período
-            manha: 0,
-            tarde: 0,
-            noite: 0
-        },
-        limitesPeriodo: {       // Número máximo de cartas por período
-            manha: 5,           // 1 higiene + 4 preparação
-            tarde: 5,           // 5 cartas de trabalho
-            noite: 5            // 5 cartas noturnas
-        }
+        sequenciaDia: []
     }
 };
 
 let id_jogo = null;
 let cardCount = 0;
 let emTransicaoPeriodo = false;
-let currentCard = null; // Guarda referência à carta atual
+let currentCard = null; 
 
-// IMPORTANTE: Remova a definição da classe Card e use essas funções auxiliares
-// Função para verificar itens compatíveis com a carta atual
+function montarSequenciaDoDia() {
+    const sequencia = [];
+    
+    const trabalhoPool = [...cartasGrupos.trabalho].sort(() => Math.random() - 0.5);
+
+    sequencia.push(cartasGrupos.acordar_higiene[0]);
+    sequencia.push(cartasGrupos.cafe_da_manha[0]);
+    sequencia.push(cartasGrupos.transporte_trabalho[0]);
+    sequencia.push(CARTA_CHEGOU_TRABALHO)
+    sequencia.push(...trabalhoPool.splice(0, 4));
+
+    sequencia.push(cartasGrupos.almoco[0]);
+    sequencia.push(...trabalhoPool.splice(0, 4)); 
+
+    sequencia.push(cartasGrupos.volta_casa[0]);
+    sequencia.push(CARTA_CHEGOU_CASA);
+    sequencia.push(cartasGrupos.jantar[0]);
+    sequencia.push(cartasGrupos.dormir[0]);
+
+    jogador.estado.sequenciaDia = sequencia.filter(Boolean);
+    console.log("ROTEIRO DO DIA MONTADO:", jogador.estado.sequenciaDia.map(c => c.id));
+}
+
 function verificarItensCompativeis(carta) {
     if (!carta.itens_compativeis || !jogador.inventario.length) {
         return [];
     }
-    
-    // Filtrar itens do inventário que são compatíveis com esta carta
+
     return jogador.inventario.filter(item => {
-        // Verificar se o item tem tags que correspondem aos tipos compatíveis
         if (item.tags) {
             const tagsArray = typeof item.tags === 'string' ? item.tags.split(',') : item.tags;
             return carta.itens_compativeis.some(tipo => 
                 tagsArray.includes(tipo)
             );
         }
-        // Se não tiver tags, usar nome do item como fallback
         return carta.itens_compativeis.some(tipo => 
             item.nome.toLowerCase().includes(tipo.toLowerCase())
         );
     });
 }
 
-// Função para mostrar menu de itens
 function mostrarMenuItens(itensCompativeis, cardElement) {
-    // Remover menu existente se houver
     const menuExistente = document.querySelector('.menu-itens');
     if (menuExistente) menuExistente.remove();
     
-    // Criar menu
     const menu = document.createElement('div');
     menu.classList.add('menu-itens');
     menu.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.9); border-radius: 10px; padding: 20px; min-width: 280px; z-index: 1000;';
     
-    // Título
     const titulo = document.createElement('h3');
     titulo.textContent = 'Escolha um item para usar:';
     titulo.style.cssText = 'color: white; margin-bottom: 15px; text-align: center;';
     menu.appendChild(titulo);
     
-    // Lista de itens
     itensCompativeis.forEach(item => {
         const itemBtn = document.createElement('div');
         itemBtn.classList.add('item-opcao');
@@ -301,20 +482,19 @@ function mostrarMenuItens(itensCompativeis, cardElement) {
         itemBtn.appendChild(itemNome);
         itemBtn.appendChild(itemUsos);
         
-        // Efeito hover
         itemBtn.addEventListener('mouseover', () => {
             itemBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
         });
         itemBtn.addEventListener('mouseout', () => {
             itemBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
         });
-        
-        // Clicar para usar
+
         itemBtn.addEventListener('click', () => {
             usarItemContextual(item);
             menu.remove();
-            
-            // Remover a carta atual
+
+            cardCount++;
+
             cardElement.classList.add('dismissing');
             setTimeout(() => {
                 cardElement.remove();
@@ -325,7 +505,6 @@ function mostrarMenuItens(itensCompativeis, cardElement) {
         menu.appendChild(itemBtn);
     });
     
-    // Botão de cancelar
     const cancelarBtn = document.createElement('button');
     cancelarBtn.textContent = 'Cancelar';
     cancelarBtn.style.cssText = 'width: 100%; background-color: #444; color: white; border: none; padding: 10px; border-radius: 5px; margin-top: 10px; cursor: pointer;';
@@ -337,7 +516,6 @@ function mostrarMenuItens(itensCompativeis, cardElement) {
     document.body.appendChild(menu);
 }
 
-// Função para adicionar botão de uso de item em uma carta
 function adicionarBotaoUsarItem(cardElement, carta) {
     const itensCompativeis = verificarItensCompativeis(carta);
     
@@ -355,16 +533,13 @@ function adicionarBotaoUsarItem(cardElement, carta) {
     }
 }
 
-// Função para verificar incompatibilidades com inventário
 function cartaEhCompativel(carta) {
-    // Verificar se a carta está nas últimas mostradas (evitar repetição)
+
     if (jogador.estado.ultimasCartas.includes(carta.id)) {
         return false;
     }
 
-    // Verificar incompatibilidades com itens no inventário
     if (carta.incompativel_com && carta.incompativel_com.length > 0) {
-        // Verificar se tem algum item que torna esta carta incompatível
         const temItemIncompativel = jogador.inventario.some(item => 
             carta.incompativel_com.some(tag => 
                 item.tags && item.tags.includes(tag)
@@ -373,7 +548,6 @@ function cartaEhCompativel(carta) {
         if (temItemIncompativel) return false;
     }
     
-    // Verificar incompatibilidades com estado do jogador
     if (carta.incompativel_com.includes("muito_estressado") && jogador.estresse > 70) {
         return false;
     }
@@ -385,7 +559,6 @@ function cartaEhCompativel(carta) {
     return true;
 }
 
-// Função para usar item em contexto específico
 async function usarItemContextual(item) {
     try {
         const response = await fetch(`/api/game/jogos/${id_jogo}/inventario/usar`, {
@@ -397,17 +570,14 @@ async function usarItemContextual(item) {
         const data = await response.json();
         
         if (data.status === 'success') {
-            // Aplicar os efeitos do item
+
             aplicarEfeitos(data.efeitos);
-            
-            // Recarregar o inventário
+
             await carregarInventario();
             
-            // Mostrar mensagem mais discreta (tooltip em vez de alert)
+
             mostrarNotificacao(`Você usou ${item.nome}!`);
-            
-            // Incrementar a contagem do período
-            jogador.estado.contagemPeriodo[jogador.estado.periodo]++;
+
         } else {
             console.error('Erro ao usar item:', data.message);
         }
@@ -416,7 +586,6 @@ async function usarItemContextual(item) {
     }
 }
 
-// Função para mostrar notificação
 function mostrarNotificacao(mensagem) {
     const notificacao = document.createElement('div');
     notificacao.textContent = mensagem;
@@ -441,164 +610,19 @@ function mostrarNotificacao(mensagem) {
     }, 2000);
 }
 
-// Função melhorada para selecionar próxima carta com base no estado atual
 function selecionarProximaCarta() {
-    // Definir grupos específicos para cada período
-    let gruposDisponiveis = [];
-    
-    // Forçar a seleção com base no período atual e na contagem de cartas
-    switch(jogador.estado.periodo) {
-        case "manha":
-            // Começa com higiene, depois preparo para trabalho
-            if (jogador.estado.contagemPeriodo.manha < 1) {
-                gruposDisponiveis = ["casa_manha"]; // Primeira carta: higiene
-            } else {
-                gruposDisponiveis = ["preparo_trabalho"]; // Demais cartas: preparo
-            }
-            break;
-        case "tarde":
-            gruposDisponiveis = ["trabalho"];
-            break;
-        case "noite":
-            gruposDisponiveis = ["casa_noite"];
-            break;
+
+    const proximaCarta = jogador.estado.sequenciaDia[cardCount];
+
+    if (!proximaCarta) {
+        console.error("Fim da sequência ou carta inválida! Encerrando o jogo.");
+        cardCount = jogador.estado.sequenciaDia.length; 
+        return null;
     }
     
-    // Adicionar grupo de saúde com menor prioridade
-    const todosPossiveisGrupos = [...gruposDisponiveis, "saude"];
-    
-    // Filtrar cartas disponíveis
-    let cartasDisponiveis = [];
-    
-    // Verificar cartas nos grupos prioritários
-    for (const grupo of todosPossiveisGrupos) {
-        if (cartasGrupos[grupo]) {
-            // Filtrar cartas compatíveis
-            const cartasGrupo = cartasGrupos[grupo].filter(carta => 
-                cartaEhCompativel(carta)
-            );
-            
-            // Verificações adicionais para cartas específicas
-            const cartasFiltradas = cartasGrupo.filter(carta => {
-                // Happy Hour só deve aparecer no final da tarde (última carta)
-                if (carta.tags && carta.tags.includes("fim_expediente")) {
-                    return jogador.estado.periodo === "tarde" && 
-                           jogador.estado.contagemPeriodo.tarde >= 4;
-                }
-                return true;
-            });
-            
-            // Se encontramos cartas no grupo principal, usar apenas elas
-            if (cartasFiltradas.length > 0 && gruposDisponiveis.includes(grupo)) {
-                cartasDisponiveis = cartasFiltradas;
-                jogador.estado.ultimoGrupo = grupo;
-                break;
-            } 
-            // Senão, adicionar cartas de saúde como fallback
-            else if (grupo === "saude") {
-                cartasDisponiveis = [...cartasDisponiveis, ...cartasFiltradas];
-            }
-        }
-    }
-    
-    // Se não há cartas disponíveis, resetar histórico para permitir repetições
-    if (cartasDisponiveis.length === 0) {
-        jogador.estado.ultimasCartas = [];
-        
-        // Tentar novamente com novas cartas (somente como último recurso)
-        const cartasAleatorias = cartas.filter(carta => 
-            carta.tags && carta.tags.some(tag => 
-                tag === "teste" || tag === jogador.estado.periodo
-            )
-        );
-        
-        if (cartasAleatorias.length > 0) {
-            return cartasAleatorias[Math.floor(Math.random() * cartasAleatorias.length)];
-        } else {
-            return cartas[Math.floor(Math.random() * cartas.length)];
-        }
-    }
-    
-    // Escolher uma carta aleatória do conjunto disponível
-    const cartaSelecionada = cartasDisponiveis[Math.floor(Math.random() * cartasDisponiveis.length)];
-    
-    // Atualizar histórico
-    jogador.estado.ultimasCartas.push(cartaSelecionada.id);
-    if (jogador.estado.ultimasCartas.length > 5) {
-        jogador.estado.ultimasCartas.shift();
-    }
-    
-    // Incrementar contador de cartas desde último item
-    jogador.estado.contadores.itens++;
-    
-    return cartaSelecionada;
+    return proximaCarta;
 }
 
-// Função melhorada para avanço de período
-function avancarPeriodo() {
-    let mensagemTransicao = "";
-    let novoPeriodo = "";
-    let novoLocal = "";
-    
-    switch(jogador.estado.periodo) {
-        case "manha":
-            novoPeriodo = "tarde";
-            novoLocal = "trabalho";
-            mensagemTransicao = "Você chegou ao trabalho. O expediente da tarde começou!";
-            break;
-        case "tarde":
-            novoPeriodo = "noite";
-            novoLocal = "casa";
-            mensagemTransicao = "O dia de trabalho acabou. Você chegou em casa à noite.";
-            break;
-        case "noite":
-            novoPeriodo = "manha";
-            novoLocal = "casa";
-            mensagemTransicao = "Um novo dia começa! Você acorda em casa pela manhã.";
-            break;
-    }
-    
-    // Resetar contagem para o novo período
-    jogador.estado.contagemPeriodo[jogador.estado.periodo] = 0;
-    
-    // Atualizar estado
-    jogador.estado.periodo = novoPeriodo;
-    jogador.estado.local = novoLocal;
-    
-    // Marcar que estamos em transição
-    emTransicaoPeriodo = true;
-    
-    // Limpar histórico de cartas para permitir cartas novas no novo período
-    jogador.estado.ultimasCartas = [];
-    
-    // Criar carta de transição
-    const transicaoCard = document.createElement('div');
-    transicaoCard.classList.add('card', 'transicao-periodo');
-    transicaoCard.innerHTML = `
-        <p class="pergunta">${mensagemTransicao}</p>
-        <div style="margin-top: 20px; font-size: 36px;">${jogador.estado.periodo === "noite" ? "🌙" : "☀️"}</div>
-        <button class="continuar" style="background-color: #2c88d9; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 16px; margin-top: 20px; cursor: pointer;">Continuar</button>
-    `;
-    
-    // Adicionar à pilha de cartas
-    swiper.append(transicaoCard);
-    
-    // Adicionar evento ao botão
-    const btnContinuar = transicaoCard.querySelector('.continuar');
-    btnContinuar.addEventListener('click', () => {
-        transicaoCard.classList.add('dismissing');
-        setTimeout(() => {
-            transicaoCard.remove();
-            emTransicaoPeriodo = false;
-            diaNoite(); // Atualizar visual dia/noite
-            appendNewCard(); // Mostrar próxima carta
-        }, 300);
-    });
-    
-    console.log(`Período avançado para: ${jogador.estado.periodo} em ${jogador.estado.local}`);
-}
-
-// Carregar inventário ao iniciar o jogo
 async function carregarInventario() {
     try {
         if (!id_jogo) return;
@@ -657,9 +681,7 @@ async function carregarJogo() {
     try {
         const response = await fetch('/api/game/jogos/iniciar', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: { 'Content-Type': 'application/json' }
         });
         
         const data = await response.json();
@@ -672,35 +694,18 @@ async function carregarJogo() {
             jogador.felicidade = data.jogo.felicidade;
             jogador.saldo = data.jogo.saldo;
             
-            // Inicializar estado do jogador
             jogador.estado = {
-                local: "casa",
-                periodo: "manha",
                 condicoes: [],
                 ultimasCartas: [],
-                ultimoGrupo: "",
-                ultimoItem: null,
-                contadores: {
-                    itens: 3, // Começar com chance de receber item
-                    consecutivasMesmoGrupo: 0
-                },
-                contagemPeriodo: {
-                    manha: 0,
-                    tarde: 0,
-                    noite: 0
-                },
-                limitesPeriodo: {
-                    manha: 5,
-                    tarde: 5,
-                    noite: 5
-                }
+                contadores: { itens: 3 },
+                sequenciaDia: [] 
             };
 
             await carregarInventario();
             
             cardCount = data.jogo.card_position || 0;
 
-            diaNoite();
+            montarSequenciaDoDia(); 
             atualizarHUD();
             
             console.log('Jogo carregado com sucesso:', data.jogo);
@@ -712,60 +717,145 @@ async function carregarJogo() {
     }
 }
 
-// Melhorar a interface de inventário
+// SUBSTITUA sua função atualizarInventarioUI por esta versão melhorada:
 function atualizarInventarioUI() {
     const inventarioElement = document.getElementById('inventario');
     inventarioElement.innerHTML = '';
     
-    // Criar botão de toggle para o inventário
     const inventarioToggle = document.createElement('button');
     inventarioToggle.id = 'toggle-inventario';
     inventarioToggle.innerHTML = '🎒';
-    inventarioToggle.style.cssText = 'background: none; border: none; font-size: 24px; cursor: pointer;';
+    inventarioToggle.style.cssText = 'background: none; border: none; font-size: 24px; cursor: pointer; position: relative;';
+    
+    // Badge com número de itens
+    if (jogador.inventario.length > 0) {
+        const badge = document.createElement('span');
+        badge.style.cssText = 'position: absolute; top: -5px; right: -5px; background-color: #ff4444; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: bold;';
+        badge.textContent = jogador.inventario.length;
+        inventarioToggle.appendChild(badge);
+    }
+    
     inventarioElement.appendChild(inventarioToggle);
     
-    // Criar o painel de inventário (inicialmente oculto)
     const inventarioPanel = document.createElement('div');
     inventarioPanel.id = 'inventario-panel';
-    inventarioPanel.style.cssText = 'display: none; position: absolute; bottom: 60px; right: 10px; background-color: rgba(0,0,0,0.8); padding: 15px; border-radius: 10px; min-width: 200px; z-index: 100;';
+    inventarioPanel.style.cssText = `
+        display: none; 
+        position: absolute; 
+        bottom: 60px; 
+        right: 10px; 
+        background: linear-gradient(135deg, rgba(0,0,0,0.95), rgba(20,20,20,0.95));
+        backdrop-filter: blur(10px);
+        padding: 15px; 
+        border-radius: 15px; 
+        min-width: 280px; 
+        max-width: 320px;
+        border: 1px solid rgba(255,255,255,0.1);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        z-index: 100;
+    `;
+    
+    // Título do inventário
+    const titulo = document.createElement('h3');
+    titulo.style.cssText = 'color: white; margin: 0 0 15px 0; font-size: 16px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;';
+    titulo.textContent = '🎒 Inventário';
+    inventarioPanel.appendChild(titulo);
     
     if (jogador.inventario.length === 0) {
-        inventarioPanel.innerHTML = '<p style="color: white; text-align: center;">Inventário vazio</p>';
+        const mensagemVazio = document.createElement('div');
+        mensagemVazio.style.cssText = 'text-align: center; color: rgba(255,255,255,0.6); font-style: italic; padding: 20px;';
+        mensagemVazio.innerHTML = '📦<br>Inventário vazio';
+        inventarioPanel.appendChild(mensagemVazio);
     } else {
-        const lista = document.createElement('ul');
-        lista.style.cssText = 'list-style: none; padding: 0; margin: 0;';
+        const lista = document.createElement('div');
+        lista.style.cssText = 'max-height: 300px; overflow-y: auto;';
         
         jogador.inventario.forEach(item => {
-            const li = document.createElement('li');
-            li.style.cssText = 'padding: 8px; margin-bottom: 5px; background-color: rgba(255,255,255,0.1); border-radius: 5px; color: white; display: flex; justify-content: space-between;';
-            li.innerHTML = `
-                <span>${item.nome}</span>
-                <span>${item.usos_restantes} usos</span>
+            const itemDiv = document.createElement('div');
+            itemDiv.style.cssText = `
+                display: flex; 
+                align-items: center; 
+                padding: 10px; 
+                margin-bottom: 8px; 
+                background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+                border-radius: 10px; 
+                color: white; 
+                cursor: pointer;
+                transition: all 0.3s ease;
+                border: 1px solid rgba(255,255,255,0.1);
             `;
-            li.dataset.itemId = item.id_item_inventario;
             
-            // Informação sobre o item ao passar o mouse
+            // Ícone do item (baseado no tipo ou nome)
+            const icone = obterIconeItem(item);
+            const iconeSpan = document.createElement('span');
+            iconeSpan.style.cssText = 'font-size: 20px; margin-right: 12px; min-width: 24px;';
+            iconeSpan.textContent = icone;
+            
+            // Info do item
+            const infoDiv = document.createElement('div');
+            infoDiv.style.cssText = 'flex: 1; display: flex; flex-direction: column;';
+            
+            const nomeSpan = document.createElement('span');
+            nomeSpan.style.cssText = 'font-size: 14px; font-weight: 500; margin-bottom: 2px;';
+            nomeSpan.textContent = item.nome;
+            
+            const usosSpan = document.createElement('span');
+            usosSpan.style.cssText = 'font-size: 11px; color: rgba(255,255,255,0.7);';
+            usosSpan.textContent = `${item.usos_restantes} uso${item.usos_restantes !== 1 ? 's' : ''} restante${item.usos_restantes !== 1 ? 's' : ''}`;
+            
+            infoDiv.appendChild(nomeSpan);
+            infoDiv.appendChild(usosSpan);
+            
+            itemDiv.appendChild(iconeSpan);
+            itemDiv.appendChild(infoDiv);
+            
+            // Tooltip detalhado
             const tooltip = document.createElement('div');
-            tooltip.style.cssText = 'display: none; position: absolute; background-color: rgba(0,0,0,0.9); padding: 10px; border-radius: 5px; color: white; max-width: 200px; z-index: 101; right: 220px; bottom: 60px;';
+            tooltip.style.cssText = `
+                display: none; 
+                position: absolute; 
+                background: linear-gradient(135deg, rgba(0,0,0,0.95), rgba(20,20,20,0.95));
+                backdrop-filter: blur(10px);
+                padding: 12px; 
+                border-radius: 10px; 
+                color: white; 
+                max-width: 250px; 
+                z-index: 101; 
+                right: 340px; 
+                bottom: 60px;
+                border: 1px solid rgba(255,255,255,0.2);
+                box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            `;
+            
             tooltip.innerHTML = `
-                <h4 style="margin: 0 0 5px 0;">${item.nome}</h4>
-                <p style="margin: 0 0 5px 0; font-size: 12px; font-style: italic;">${item.descricao || 'Sem descrição'}</p>
-                <div style="font-size: 11px;">
-                    <p style="margin: 2px 0;">Usar este item na situação apropriada</p>
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size: 18px; margin-right: 8px;">${icone}</span>
+                    <h4 style="margin: 0; font-size: 14px;">${item.nome}</h4>
+                </div>
+                <p style="margin: 0 0 8px 0; font-size: 12px; color: rgba(255,255,255,0.8); line-height: 1.4;">${item.descricao || 'Sem descrição disponível'}</p>
+                <div style="font-size: 11px; color: rgba(255,255,255,0.9);">
+                    ${criarEfeitosTexto(item)}
+                </div>
+                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.2); font-size: 10px; color: rgba(255,255,255,0.6);">
+                    💡 Use este item em situações compatíveis
                 </div>
             `;
             
-            li.addEventListener('mouseover', () => {
-                li.style.backgroundColor = 'rgba(255,255,255,0.2)';
+            // Eventos de hover
+            itemDiv.addEventListener('mouseover', () => {
+                itemDiv.style.background = 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))';
+                itemDiv.style.transform = 'translateY(-2px)';
                 tooltip.style.display = 'block';
             });
-            li.addEventListener('mouseout', () => {
-                li.style.backgroundColor = 'rgba(255,255,255,0.1)';
+            
+            itemDiv.addEventListener('mouseout', () => {
+                itemDiv.style.background = 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))';
+                itemDiv.style.transform = 'translateY(0)';
                 tooltip.style.display = 'none';
             });
             
             inventarioElement.appendChild(tooltip);
-            lista.appendChild(li);
+            lista.appendChild(itemDiv);
         });
         
         inventarioPanel.appendChild(lista);
@@ -773,15 +863,102 @@ function atualizarInventarioUI() {
     
     inventarioElement.appendChild(inventarioPanel);
     
-    // Adicionar evento para mostrar/ocultar o painel
+    // Toggle do inventário
     inventarioToggle.addEventListener('click', () => {
         const panel = document.getElementById('inventario-panel');
         if (panel.style.display === 'none') {
             panel.style.display = 'block';
+            panel.style.animation = 'slideInUp 0.3s ease';
         } else {
-            panel.style.display = 'none';
+            panel.style.animation = 'slideOutDown 0.3s ease';
+            setTimeout(() => {
+                panel.style.display = 'none';
+            }, 250);
         }
     });
+    
+    // Fechar inventário ao clicar fora
+    document.addEventListener('click', (e) => {
+        const panel = document.getElementById('inventario-panel');
+        const toggle = document.getElementById('toggle-inventario');
+        
+        if (panel && panel.style.display === 'block' && 
+            !panel.contains(e.target) && !toggle.contains(e.target)) {
+            panel.style.animation = 'slideOutDown 0.3s ease';
+            setTimeout(() => {
+                panel.style.display = 'none';
+            }, 250);
+        }
+    });
+}
+
+// Função auxiliar para obter ícones dos itens
+function obterIconeItem(item) {
+    const nome = item.nome.toLowerCase();
+    const tipo = item.tipo ? item.tipo.toLowerCase() : '';
+    
+    // Ícones baseados no nome do item
+    if (nome.includes('remedio') || nome.includes('medicamento')) return '💊';
+    if (nome.includes('vitamina')) return '🟡';
+    if (nome.includes('cafe') || nome.includes('café')) return '☕';
+    if (nome.includes('energético') || nome.includes('energetico')) return '⚡';
+    if (nome.includes('fone') || nome.includes('headphone')) return '🎧';
+    if (nome.includes('tampão') || nome.includes('tampao')) return '🔇';
+    if (nome.includes('mascara') || nome.includes('máscara')) return '😴';
+    if (nome.includes('livro')) return '📚';
+    if (nome.includes('manual')) return '📖';
+    if (nome.includes('guia')) return '📋';
+    if (nome.includes('carteira')) return '👛';
+    if (nome.includes('dinheiro')) return '💰';
+    if (nome.includes('cartão') || nome.includes('cartao')) return '💳';
+    if (nome.includes('comida') || nome.includes('lanche')) return '🍎';
+    if (nome.includes('agua') || nome.includes('água')) return '💧';
+    if (nome.includes('ventilador')) return '🌪️';
+    if (nome.includes('guarda-chuva') || nome.includes('guarda_chuva')) return '☂️';
+    if (nome.includes('sapato') || nome.includes('tenis') || nome.includes('tênis')) return '👟';
+    if (nome.includes('tapete') || nome.includes('yoga')) return '🧘';
+    if (nome.includes('escova')) return '🦷';
+    if (nome.includes('presente')) return '🎁';
+    if (nome.includes('agenda')) return '📅';
+    if (nome.includes('cha') || nome.includes('chá')) return '🍵';
+    
+    // Ícones baseados no tipo
+    if (tipo.includes('medicamento') || tipo.includes('remedio')) return '💊';
+    if (tipo.includes('bebida')) return '🥤';
+    if (tipo.includes('comida') || tipo.includes('alimento')) return '🍎';
+    if (tipo.includes('equipamento') || tipo.includes('ferramenta')) return '🔧';
+    if (tipo.includes('roupa') || tipo.includes('acessorio')) return '👕';
+    if (tipo.includes('livro') || tipo.includes('leitura')) return '📚';
+    
+    // Ícone padrão
+    return '📦';
+}
+
+// Função auxiliar para criar texto dos efeitos
+function criarEfeitosTexto(item) {
+    const efeitos = [];
+    
+    if (item.efeito_saude && item.efeito_saude !== 0) {
+        const sinal = item.efeito_saude > 0 ? '+' : '';
+        efeitos.push(`❤️ Saúde: ${sinal}${item.efeito_saude}`);
+    }
+    
+    if (item.efeito_estresse && item.efeito_estresse !== 0) {
+        const sinal = item.efeito_estresse > 0 ? '+' : '';
+        efeitos.push(`😰 Estresse: ${sinal}${item.efeito_estresse}`);
+    }
+    
+    if (item.efeito_felicidade && item.efeito_felicidade !== 0) {
+        const sinal = item.efeito_felicidade > 0 ? '+' : '';
+        efeitos.push(`😊 Felicidade: ${sinal}${item.efeito_felicidade}`);
+    }
+    
+    if (item.efeito_saldo && item.efeito_saldo !== 0) {
+        const sinal = item.efeito_saldo > 0 ? '+' : '';
+        efeitos.push(`💰 Saldo: ${sinal}${item.efeito_saldo}`);
+    }
+    
+    return efeitos.length > 0 ? efeitos.join('<br>') : 'Sem efeitos especiais';
 }
 
 async function usarItem(item) {
@@ -795,13 +972,10 @@ async function usarItem(item) {
         const data = await response.json();
         
         if (data.status === 'success') {
-            // Aplicar os efeitos do item
             aplicarEfeitos(data.efeitos);
             
-            // Recarregar o inventário
             await carregarInventario();
             
-            // Mostrar mensagem com notificação em vez de alert
             mostrarNotificacao(`Você usou ${item.nome}!`);
         } else {
             console.error('Erro ao usar item:', data.message);
@@ -831,7 +1005,6 @@ async function aplicarEfeitos(efeitos) {
     }
     atualizarHUD();
     diaNoite();
-    encerrarJogo();
 
     if (id_jogo) {
         try {
@@ -865,11 +1038,9 @@ async function aplicarEfeitos(efeitos) {
     console.log("Estado atual:", jogador);
 }
 
+
 function appendNewCard() {
-    // Se estamos no meio de uma transição, não mostrar nova carta
-    if (emTransicaoPeriodo) return;
-    
-    // Checa primeiro se perdeu por estatística
+
     if (jogador.estresse >= 100 || jogador.felicidade <= 0 || jogador.saldo <= 0 || jogador.saude <= 0) {
         const mensagens = {
             estresse: "Fim do jogo! Você teve um ataque cardíaco.",
@@ -877,14 +1048,12 @@ function appendNewCard() {
             saldo: "Fim do jogo! Você faliu.",
             saude: "Fim do jogo! Sua saúde chegou a zero."
         };
-        
         const cores = {
             estresse: "rgb(229, 26, 26)",
             felicidade: "rgb(0, 0, 0)",
             saldo: "rgb(212, 225, 28)",
             saude: "rgb(125, 121, 121)"
         };
-        
         let motivo = jogador.estresse >= 100 ? "estresse" : 
                       jogador.felicidade <= 0 ? "felicidade" : 
                       jogador.saldo <= 0 ? "saldo" : "saude";
@@ -895,87 +1064,87 @@ function appendNewCard() {
             <p class="pergunta">${mensagens[motivo]}</p>
             <button id="reiniciarJogo" style="background-color:${cores[motivo]}; color: white; border: none; padding: 20px 130px; border-radius: 8px; font-size: 16px; margin-bottom:-32px; cursor: pointer;">Começar Novo Jogo</button>
         `;
+        swiper.innerHTML = '';
         swiper.append(fimDeJogo);
         document.getElementById('reiniciarJogo').addEventListener('click', reiniciarJogo);
         return;
     }
 
-    // Verificar se acabaram as cartas
-    if (cardCount >= cartas.length) {
+    if (cardCount >= jogador.estado.sequenciaDia.length) {
+        console.log("Fim do roteiro alcançado. Mostrando tela final.");
         const fimDeJogo = document.createElement('div');
         fimDeJogo.classList.add('card');
         fimDeJogo.innerHTML = `
-            <p class="pergunta">Fim do jogo! Você completou todas as cartas.</p>
+            <p class="pergunta">Fim do jogo! Você completou o dia.</p>
             <button id="reiniciarJogo" style="background-color: #2c88d9; color: white; border: none; padding: 20px 130px; border-radius: 8px; font-size: 16px; margin-bottom:-32px; cursor: pointer;">Começar Novo Jogo</button>
         `;
+        swiper.innerHTML = '';
         swiper.append(fimDeJogo);
         document.getElementById('reiniciarJogo').addEventListener('click', reiniciarJogo);
         return;
     }
-    
-    // Verificar se atingimos o limite de cartas para o período atual
-    if (jogador.estado.contagemPeriodo[jogador.estado.periodo] >= jogador.estado.limitesPeriodo[jogador.estado.periodo]) {
-        avancarPeriodo();
-        return; // Importante: retornar aqui para não mostrar a próxima carta ainda
-    }
-    
-    // Chance ajustada de receber item aleatório (10% em vez de 20%)
-    // E apenas se passaram pelo menos 3 cartas desde o último item
+
+
     if (Math.random() < 0.1 && jogador.estado.contadores.itens >= 3) {
-        jogador.estado.contadores.itens = 0; // Resetar contador
+        jogador.estado.contadores.itens = 0;
         verificarItemAleatorio();
-        return; // Importante: retornar para não mostrar a próxima carta normal
+        return;
     }
 
-    // Selecionar a próxima carta com base no estado atual
     const cardAtual = selecionarProximaCarta();
-    currentCard = cardAtual; // Guardar referência para uso posterior
-    
-    // Usar a classe Card existente
-    const card = new Card({
-        imageUrl: cardAtual.texto,
-        onDismiss: appendNewCard,
-        onLike: () => {
-            aplicarEfeitos(cardAtual.sim);
-            
-            // Executar ações especiais quando existirem
-            if (cardAtual.acoes_sim) {
-                // Se a ação for adicionar item ao inventário
-                if (cardAtual.acoes_sim.adicionar_item) {
-                    // CORREÇÃO: Passar a referência do elemento card.element
+    if (!cardAtual) {
+        console.error("Não foi possível encontrar a próxima carta no roteiro. Avançando...");
+        cardCount++;
+        appendNewCard();
+        return;
+    }
+    currentCard = cardAtual;
+
+    if (cardAtual.type === 'transicao') {
+        const transicaoCard = document.createElement('div');
+        transicaoCard.classList.add('card');
+        transicaoCard.innerHTML = `
+            <p class="pergunta" style="text-align: center; font-size: 1.5em;">${cardAtual.texto}</p>
+            <button class="continuar-btn">Continuar</button>
+        `;
+        swiper.append(transicaoCard);
+        
+        const btn = transicaoCard.querySelector('.continuar-btn');
+        btn.addEventListener('click', () => {
+            cardCount++;
+            transicaoCard.classList.add('dismissing');
+            setTimeout(() => {
+                transicaoCard.remove();
+                appendNewCard();
+            }, 300);
+        });
+
+    } else {
+        const card = new Card({
+            imageUrl: cardAtual.texto,
+            onDismiss: appendNewCard,
+            onLike: () => {
+                aplicarEfeitos(cardAtual.sim);
+                if (cardAtual.acoes_sim && cardAtual.acoes_sim.adicionar_item) {
                     adicionarItemAoInventario(cardAtual.acoes_sim.adicionar_item, card.element);
-                    console.log("Item adicionado pela ação da carta:", cardAtual.acoes_sim.adicionar_item);
-                    return; // CORREÇÃO: retornar aqui para não incrementar a contagem
+                    return;
                 }
+                cardCount++;
+                console.log("✔️ SIM:", cardAtual.texto);
+            },
+            onDislike: () => {
+                aplicarEfeitos(cardAtual.nao);
+                if (cardAtual.acoes_nao && cardAtual.acoes_nao.adicionar_item) {
+                    adicionarItemAoInventario(cardAtual.acoes_nao.adicionar_item, card.element);
+                    return;
+                }
+                cardCount++;
+                console.log("❌ NÃO:", cardAtual.texto);
             }
-            
-            // Incrementar a contagem do período atual
-            jogador.estado.contagemPeriodo[jogador.estado.periodo]++;
-            
-            console.log("✔️ SIM:", cardAtual.texto);
-        },
-        onDislike: () => {
-            aplicarEfeitos(cardAtual.nao);
-            
-            // Também podemos processar ações para "não" se necessário
-            if (cardAtual.acoes_nao && cardAtual.acoes_nao.adicionar_item) {
-                // CORREÇÃO: Passar a referência do elemento card.element
-                adicionarItemAoInventario(cardAtual.acoes_nao.adicionar_item, card.element);
-                return; // CORREÇÃO: retornar aqui para não incrementar a contagem
-            }
-            
-            // Incrementar a contagem do período atual
-            jogador.estado.contagemPeriodo[jogador.estado.periodo]++;
-            
-            console.log("❌ NÃO:", cardAtual.texto);
-        }
-    });
-
-    // Adicionar botão de uso de item se necessário
-    adicionarBotaoUsarItem(card.element, cardAtual);
-
-    swiper.append(card.element);
-    cardCount++;
+        });
+        adicionarBotaoUsarItem(card.element, cardAtual);
+        swiper.append(card.element);
+    }
 
     const cards = swiper.querySelectorAll('.card:not(.dismissing)');
     cards.forEach((card, index) => {
@@ -983,20 +1152,16 @@ function appendNewCard() {
     });
 }
 
-// Função atualizada para verificar item aleatório
 async function verificarItemAleatorio() {
     try {
-        // Obter item aleatório do banco
         const response = await fetch('/api/game/itens/aleatorio');
         const data = await response.json();
         
         if (data.status === 'success') {
             const item = data.item;
-            
-            // Adicionar estilo ao botão
+
             const buttonStyle = "background-color: #2c88d9; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 16px; margin-top: 20px; cursor: pointer;";
-            
-            // Mostrar carta de item com descrição mais detalhada
+
             const itemCard = document.createElement('div');
             itemCard.classList.add('card');
             itemCard.innerHTML = `
@@ -1018,25 +1183,18 @@ async function verificarItemAleatorio() {
                 <button class="pegar-item" style="${buttonStyle}">Pegar Item</button>
             `;
             
-            // Adicionar a carta ao swiper
             swiper.append(itemCard);
             
-            // Adicionar evento de clique ao botão
             const btn = itemCard.querySelector('.pegar-item');
-            // CORREÇÃO: Passar itemCard como segundo parâmetro
             btn.addEventListener('click', () => adicionarItemAoInventario(item.id_item, itemCard));
         }
     } catch (error) {
         console.error('Erro ao obter item aleatório:', error);
-        // Em caso de erro, continuar com o jogo normalmente
         appendNewCard();
     }
 }
 
-// Corrigir função de adicionar item ao inventário para evitar múltiplos cliques
-// Função corrigida para receber a referência da carta
 async function adicionarItemAoInventario(id_item, cartaOriginal = null) {
-    // Desabilitar o botão para evitar múltiplos cliques
     const btn = document.querySelector('.pegar-item');
     if (btn) {
         btn.disabled = true;
@@ -1054,26 +1212,23 @@ async function adicionarItemAoInventario(id_item, cartaOriginal = null) {
         const data = await response.json();
         
         if (data.status === 'success') {
-            // Armazenar o item recebido para referência futura
             jogador.estado.ultimoItem = id_item;
             
             await carregarInventario();
             
-            // IMPORTANTE: Verificar se temos uma referência específica à carta
             if (cartaOriginal) {
                 cartaOriginal.classList.add('dismissing');
                 setTimeout(() => {
                     cartaOriginal.remove();
-                    appendNewCard(); // Avançar para próxima carta
+                    appendNewCard();
                 }, 300);
             } else {
-                // Caso de carta de item (que tem o botão "Pegar Item")
                 const itemCard = document.querySelector('.card');
                 if (itemCard) {
                     itemCard.classList.add('dismissing');
                     setTimeout(() => {
                         itemCard.remove();
-                        appendNewCard(); // Avançar para próxima carta
+                        appendNewCard();
                     }, 300);
                 } else {
                     appendNewCard();
@@ -1081,7 +1236,6 @@ async function adicionarItemAoInventario(id_item, cartaOriginal = null) {
             }
         } else {
             console.error('Erro ao adicionar item:', data.message);
-            // Reativar o botão em caso de erro
             if (btn) {
                 btn.disabled = false;
                 btn.textContent = "Pegar Item";
@@ -1090,7 +1244,6 @@ async function adicionarItemAoInventario(id_item, cartaOriginal = null) {
         }
     } catch (error) {
         console.error('Erro ao adicionar item:', error);
-        // Reativar o botão em caso de erro
         if (btn) {
             btn.disabled = false;
             btn.textContent = "Pegar Item";
@@ -1098,58 +1251,7 @@ async function adicionarItemAoInventario(id_item, cartaOriginal = null) {
         }
     }
 }
-function adicionarCartaSemIncrementar(indice) {
-    if (indice >= cartas.length) return;
-    
-    const cardAtual = cartas[indice];
-    currentCard = cardAtual; // Guardar referência
-    
-    const card = new Card({
-        imageUrl: cardAtual.texto,
-        onDismiss: appendNewCard,
-        onLike: () => {
-            aplicarEfeitos(cardAtual.sim);
-            
-            // Executar ações especiais quando existirem
-            if (cardAtual.acoes_sim) {
-                if (cardAtual.acoes_sim.adicionar_item) {
-                    // CORREÇÃO: Passar a referência do elemento card.element
-                    adicionarItemAoInventario(cardAtual.acoes_sim.adicionar_item, card.element);
-                    return; // CORREÇÃO: retornar aqui para não incrementar a contagem
-                }
-            }
-            
-            // Incrementar a contagem do período atual
-            jogador.estado.contagemPeriodo[jogador.estado.periodo]++;
-            
-            console.log("✔️ SIM:", cardAtual.texto);
-        },
-        onDislike: () => {
-            aplicarEfeitos(cardAtual.nao);
-            
-            if (cardAtual.acoes_nao && cardAtual.acoes_nao.adicionar_item) {
-                // CORREÇÃO: Passar a referência do elemento card.element
-                adicionarItemAoInventario(cardAtual.acoes_nao.adicionar_item, card.element);
-                return; // CORREÇÃO: retornar aqui para não incrementar a contagem
-            }
-            
-            // Incrementar a contagem do período atual
-            jogador.estado.contagemPeriodo[jogador.estado.periodo]++;
-            
-            console.log("❌ NÃO:", cardAtual.texto);
-        }
-    });
-    
-    // Adicionar botão de uso de item se necessário
-    adicionarBotaoUsarItem(card.element, cardAtual);
-    
-    swiper.append(card.element);
-    
-    const cards = swiper.querySelectorAll('.card:not(.dismissing)');
-    cards.forEach((card, index) => {
-        card.style.setProperty('--i', index);
-    });
-}
+
 
 function atualizarHUD() {
     document.getElementById('saude').innerText = jogador.saude;
@@ -1158,79 +1260,29 @@ function atualizarHUD() {
     document.getElementById('saldo').innerText = jogador.saldo;
 }
 
-// Versão aprimorada da função diaNoite()
 function diaNoite() {
     const dia = document.getElementById('dia');
     const noite = document.getElementById('noite');
+    if (!dia || !noite || !currentCard) return;
 
-    if (!dia || !noite) {
-        console.error("Elementos de dia/noite não encontrados!");
-        return;
-    }
+    const isNight = currentCard.tags.includes('noite');
 
-    if (jogador.estado.periodo === "manha" || jogador.estado.periodo === "tarde") {
+    if (!isNight) {
         dia.style.opacity = 1;
         noite.style.opacity = 0;
         document.body.style.backgroundColor = "var(--mid-blue)";
-        document.body.classList.remove('periodo-noite');
-        document.body.classList.add('periodo-dia');
     } else {
         dia.style.opacity = 0;
         noite.style.opacity = 1;
         document.body.style.backgroundColor = "var(--dark-blue)";
-        document.body.classList.remove('periodo-dia');
-        document.body.classList.add('periodo-noite');
-    }
-    
-    // Adicionar feedback visual para a mudança
-    const indicadorExistente = document.querySelector('.periodo-indicador');
-    if (indicadorExistente) {
-        indicadorExistente.remove();
-    }
-    
-    const indicador = document.createElement('div');
-    indicador.classList.add('periodo-indicador');
-    indicador.textContent = jogador.estado.periodo === "noite" ? "🌙 Noite" : "☀️ " + 
-        (jogador.estado.periodo === "manha" ? "Manhã" : "Tarde");
-    indicador.style.cssText = `
-        position: fixed;
-        top: 15px;
-        right: 15px;
-        background-color: rgba(0, 0, 0, 0.7);
-        color: white;
-        padding: 5px 10px;
-        border-radius: 20px;
-        font-size: 14px;
-        animation: fadeInOut 2s forwards;
-        z-index: 1000;
-    `;
-    
-    document.body.appendChild(indicador);
-    
-    // Remover após animação
-    setTimeout(() => {
-        if (indicador.parentNode) {
-            indicador.remove();
-        }
-    }, 2000);
-    
-    console.log("Atualizado visual para período:", jogador.estado.periodo);
-}
-
-function encerrarJogo() {
-    if (
-        jogador.estresse >= 100 ||
-        jogador.felicidade <= 0 ||
-        jogador.saldo <= 0 ||
-        jogador.saude <= 0
-    ) {
-        cardCount = cartas.length;
     }
 }
 
-// Adicionar estilo CSS para o botão de inventário e animações
 const style = document.createElement('style');
 style.textContent = `
+    body {
+        transition: background-color 0.8s ease;
+    }
     #toggle-inventario {
         transition: transform 0.3s ease;
     }
@@ -1298,29 +1350,54 @@ style.textContent = `
     .item-opcao {
         transition: all 0.2s ease;
     }
+
+    .continuar-btn {
+        background-color: #2c88d9;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 20px;
+    }
+    .continuar-btn:hover {
+        transform: scale(1.05);
+        background-color: #235f9e;
+    }
 `;
+const novasAnimacoes = `
+    @keyframes slideInUp {
+        from { 
+            opacity: 0; 
+            transform: translateY(20px);
+        }
+        to { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+    }
+    
+    @keyframes slideOutDown {
+        from { 
+            opacity: 1; 
+            transform: translateY(0); 
+        }
+        to { 
+            opacity: 0; 
+            transform: translateY(20px); 
+        }
+    }
+    `;
+    
+style.textContent += novasAnimacoes;
+
 document.head.appendChild(style);
 
 document.addEventListener('DOMContentLoaded', () => {
     carregarJogo().then(() => {
         swiper.innerHTML = '';
-        
-        if (cardCount >= cartas.length) {
-            const fimDeJogo = document.createElement('div');
-            fimDeJogo.classList.add('card');
-            fimDeJogo.innerHTML = `
-                <p class="pergunta">Fim do jogo! Você completou todas as cartas.</p>
-                <button id="reiniciarJogo" style="background-color: #2c88d9; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 16px; margin-top: 20px; cursor: pointer;">Começar Novo Jogo</button>
-            `;
-            swiper.append(fimDeJogo);
-            
-            document.getElementById('reiniciarJogo').addEventListener('click', reiniciarJogo);
-        } else {
-            adicionarCartaSemIncrementar(cardCount);
-            
-            for (let i = 1; i < 3 && cardCount + i < cartas.length; i++) {
-                adicionarCartaSemIncrementar(cardCount + i);
-            }
-        }
+        appendNewCard();
     });
 });
